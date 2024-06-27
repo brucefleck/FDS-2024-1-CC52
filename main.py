@@ -197,41 +197,39 @@ plt.xticks(rotation=45, ha='right')
 plt.tight_layout()
 plt.show()
 
-#7. ¿En qué Estados se presenta el mayor número de “Vistas”, “Me gusta” y “No me gusta”? 
+#7. ¿En qué Estados se presenta el mayor número de "Vistas", "Me gusta" y "No me gusta"? 
 # Agrupar por Estado y sumar las vistas, me gusta y no me gusta
 estados_datos = df.groupby('state')[['views', 'likes', 'dislikes']].sum().reset_index()
 
-# con mayor número de vistas
+# Funciones para formatear números grandes
+def format_num(num):
+    return f'{num:,.0f}'
+
+# Imprimir resultados
 print("Estados con mayor número de Vistas:")
-print(estados_datos.sort_values(by='views', ascending=False).head(5))
-# con mayor número de Me gusta
+print(estados_datos.sort_values(by='views', ascending=False).head(5).to_string(index=False, formatters={'views': format_num}))
 print("\nEstados con mayor número de Me gusta:")
-print(estados_datos.sort_values(by='likes', ascending=False).head(5))
-# con mayor número de No me gusta
+print(estados_datos.sort_values(by='likes', ascending=False).head(5).to_string(index=False, formatters={'likes': format_num}))
 print("\nEstados con mayor número de No me gusta:")
-print(estados_datos.sort_values(by='dislikes', ascending=False).head(5))
+print(estados_datos.sort_values(by='dislikes', ascending=False).head(5).to_string(index=False, formatters={'dislikes': format_num}))
 
-# Gráfico para las Vistas
-estados_datos.sort_values(by='views', ascending=False).head(10).plot(kind='barh', x='state', y='views', color='skyblue')
-plt.title('Top Estados por Número de Vistas')
-plt.xlabel('Número de Vistas')
-plt.ylabel('Estado')
-plt.gca().invert_yaxis()
-plt.show()
+# Función para crear gráficos
+def plot_top_states(data, column, title, color):
+    plt.figure(figsize=(10, 6))
+    ax = data.sort_values(by=column, ascending=False).head(10).plot(kind='barh', x='state', y=column, color=color)
+    plt.title(title)
+    plt.xlabel(f'Número de {column.capitalize()}')
+    plt.ylabel('Estado')
+    plt.gca().invert_yaxis()
+    
+    # Añadir etiquetas de valor
+    for i, v in enumerate(data.sort_values(by=column, ascending=False).head(10)[column]):
+        ax.text(v, i, f' {format_num(v)}', va='center')
+    
+    plt.tight_layout()
+    plt.show()
 
-# Gráfico para los Me gusta
-estados_datos.sort_values(by='likes', ascending=False).head(10).plot(kind='barh', x='state', y='likes', color='lightgreen')
-plt.title('Top Estados por Número de Me gusta')
-plt.xlabel('Número de Me gusta')
-plt.ylabel('Estado')
-plt.gca().invert_yaxis()
-plt.show()
-
-# Gráfico para los No me gusta
-estados_datos.sort_values(by='dislikes', ascending=False).head(10).plot(kind='barh', x='state', y='dislikes', color='lightcoral')
-plt.title('Top Estados por Número de No me gusta')
-plt.xlabel('Número de No me gusta')
-plt.ylabel('Estado')
-plt.gca().invert_yaxis()
-plt.tight_layout()
-plt.show()
+# Crear gráficos
+plot_top_states(estados_datos, 'views', 'Top 10 Estados por Número de Vistas', 'skyblue')
+plot_top_states(estados_datos, 'likes', 'Top 10 Estados por Número de Me gusta', 'lightgreen')
+plot_top_states(estados_datos, 'dislikes', 'Top 10 Estados por Número de No me gusta', 'lightcoral')
