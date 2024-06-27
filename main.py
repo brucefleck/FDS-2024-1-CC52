@@ -179,3 +179,42 @@ plt.ylabel('Número de tendencias')
 plt.xticks(rotation=45, ha='right')
 plt.tight_layout()
 plt.show()
+
+#7. ¿En qué Estados se presenta el mayor número de “Vistas”, “Me gusta” y “No me gusta”? 
+# Agrupar por Estado y sumar las vistas, me gusta y no me gusta
+estados_datos = df.groupby('state')[['views', 'likes', 'dislikes']].sum().reset_index()
+
+# con mayor número de vistas
+print("Estados con mayor número de Vistas:")
+print(estados_datos.sort_values(by='views', ascending=False).head(5))
+# con mayor número de Me gusta
+print("\nEstados con mayor número de Me gusta:")
+print(estados_datos.sort_values(by='likes', ascending=False).head(5))
+# con mayor número de No me gusta
+print("\nEstados con mayor número de No me gusta:")
+print(estados_datos.sort_values(by='dislikes', ascending=False).head(5))
+
+# Gráfico para las Vistas
+estados_datos.sort_values(by='views', ascending=False).head(10).plot(kind='barh', x='state', y='views', color='skyblue')
+plt.title('Top Estados por Número de Vistas')
+plt.xlabel('Número de Vistas')
+plt.ylabel('Estado')
+plt.gca().invert_yaxis()
+plt.show()
+
+# Gráfico para los Me gusta
+estados_datos.sort_values(by='likes', ascending=False).head(10).plot(kind='barh', x='state', y='likes', color='lightgreen')
+plt.title('Top Estados por Número de Me gusta')
+plt.xlabel('Número de Me gusta')
+plt.ylabel('Estado')
+plt.gca().invert_yaxis()
+plt.show()
+
+# Gráfico para los No me gusta
+estados_datos.sort_values(by='dislikes', ascending=False).head(10).plot(kind='barh', x='state', y='dislikes', color='lightcoral')
+plt.title('Top Estados por Número de No me gusta')
+plt.xlabel('Número de No me gusta')
+plt.ylabel('Estado')
+plt.gca().invert_yaxis()
+plt.tight_layout()
+plt.show()
