@@ -95,23 +95,34 @@ categorias_mas_gustan = likes_por_categoria.head(5)
 categorias_menos_gustan = likes_por_categoria.tail(5)
 
 # Graficar
-plt.figure(figsize=(12, 6))
-plt.subplot(1, 2, 1)
-categorias_mas_gustan.plot(kind='bar', color='lightgreen')
-plt.title('Categorías de videos con más "Me gusta"')
-plt.xlabel('ID de Categoría')
-plt.ylabel('Total de "Me gusta"')
+fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(14, 6))
 
-plt.subplot(1, 2, 2)
-categorias_menos_gustan.plot(kind='bar', color='salmon')
-plt.title('Categorías de videos con menos "Me gusta"')
-plt.xlabel('ID de Categoría')
-plt.ylabel('Total de "Me gusta"')
+# Gráfico de categorías con más "Me gusta"
+categorias_mas_gustan.plot(kind='bar', color='lightgreen', ax=ax1)
+ax1.set_title('Categorías de videos con más "Me gusta"')
+ax1.set_xlabel('ID de Categoría')
+ax1.set_ylabel('Total de "Me gusta"')
+ax1.tick_params(axis='x', rotation=0)
+
+# Añadir etiquetas de valor
+for i, v in enumerate(categorias_mas_gustan):
+    ax1.text(i, v, f'{v:,.0f}', ha='center', va='bottom')
+
+# Gráfico de categorías con menos "Me gusta"
+categorias_menos_gustan.plot(kind='bar', color='salmon', ax=ax2)
+ax2.set_title('Categorías de videos con menos "Me gusta"')
+ax2.set_xlabel('ID de Categoría')
+ax2.set_ylabel('Total de "Me gusta"')
+ax2.tick_params(axis='x', rotation=0)
+
+# Añadir etiquetas de valor
+for i, v in enumerate(categorias_menos_gustan):
+    ax2.text(i, v, f'{v:,.0f}', ha='center', va='bottom')
 
 plt.tight_layout()
 plt.show()
 
-# 3. ¿Qué categorías de videos tienen la mejor proporción (ratio) de “Me gusta” / “No me gusta”?
+# 3. ¿Qué categorías de videos tienen la mejor proporción (ratio) de "Me gusta" / "No me gusta"?
 ratio_likes_dislikes = df.groupby('category_id')[['likes', 'dislikes']].sum()
 ratio_likes_dislikes['ratio_likes_dislikes'] = ratio_likes_dislikes['likes'] / (ratio_likes_dislikes['dislikes'] + 1)
 
@@ -119,12 +130,18 @@ ratio_likes_dislikes['ratio_likes_dislikes'] = ratio_likes_dislikes['likes'] / (
 categorias_mejor_ratio = ratio_likes_dislikes.sort_values(by='ratio_likes_dislikes', ascending=False).head(5)
 
 # Graficar
-plt.figure(figsize=(10, 6))
-categorias_mejor_ratio['ratio_likes_dislikes'].plot(kind='bar', color='lightblue')
+plt.figure(figsize=(12, 6))
+ax = categorias_mejor_ratio['ratio_likes_dislikes'].plot(kind='bar', color='lightblue')
 plt.title('Categorías de videos con mejor ratio de "Me gusta" / "No me gusta"')
 plt.xlabel('ID de Categoría')
 plt.ylabel('Ratio "Me gusta" / "No me gusta"')
-plt.xticks(rotation=45)
+plt.xticks(rotation=0)
+
+# Añadir etiquetas de valor encima de cada barra
+for i, v in enumerate(categorias_mejor_ratio['ratio_likes_dislikes']):
+    ax.text(i, v, f'{v:.2f}', ha='center', va='bottom')
+
+plt.tight_layout()
 plt.show()
 
 
